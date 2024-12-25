@@ -1,13 +1,12 @@
 package main
 
 import (
-	"database/sql"
 	"net/http"
 )
 
 type ReservationHandler struct {
-	mux *http.ServeMux
-	db  *sql.DB
+	mux     *http.ServeMux
+	service *StaffService
 }
 
 func (dep *ReservationHandler) Register() {

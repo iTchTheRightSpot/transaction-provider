@@ -11,12 +11,17 @@ func main() {
 	con := "postgres://pattern:pattern@localhost:5432/pattern_db?sslmode=disable"
 	db, err := ConnectToPostgres(con)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
+		return
+	}
+
+	if err = MigrateDB(db); err != nil {
+		log.Fatal(err.Error())
 		return
 	}
 
 	mux := http.NewServeMux()
-	h := &ReservationHandler{db: db, mux: mux}
+	h := &ReservationHandler{mux: mux, service: &StaffService{adapters: NewAdapters(db, &transactionProvider{db: db})}}
 	h.Register()
 
 	server := http.Server{
